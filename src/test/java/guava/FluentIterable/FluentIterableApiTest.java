@@ -1,11 +1,17 @@
 package guava.FluentIterable;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class FluentIterableApiTest {
@@ -53,5 +59,64 @@ public class FluentIterableApiTest {
 
         assertTrue(result);
 
+    }
+
+    @Test
+    public void testImmutableListUsingFluentIterable() {
+        final ImmutableList<String> cities =
+                ImmutableList.<String>builder().add("Bogota")
+                .add("Medellin")
+                .add("Cartagena")
+                .add("Manizales")
+                .add("Cali")
+                .add("Barraquilla")
+                .add("Pasto")
+                .add("Tunja").build();
+
+        List<String> filterCities = FluentIterable
+                .from(cities)
+                .filter(predicateFilterCities()).toList();
+
+        assertThat(filterCities.size(), is(2));
+    }
+
+    @Test
+    public void testImmutableListUsingIterables() {
+        final ImmutableList<String> cities =
+            ImmutableList.<String>builder().add("Bogota")
+                    .add("Medellin")
+                    .add("Cartagena")
+                    .add("Manizales")
+                    .add("Cali")
+                    .add("Barraquilla")
+                    .add("Pasto")
+                    .add("Tunja").build();
+
+        Iterable<String> result = Iterables.filter(cities, predicateFilterCities());
+    }
+
+    @Test
+    public void testImmutableListUsingCollections2() {
+        final ImmutableList<String> cities =
+                ImmutableList.<String>builder().add("Bogota")
+                        .add("Medellin")
+                        .add("Cartagena")
+                        .add("Manizales")
+                        .add("Cali")
+                        .add("Barraquilla")
+                        .add("Pasto")
+                        .add("Tunja").build();
+
+        Collection<String> result = Collections2.filter(cities, predicateFilterCities());
+        assertThat(result.size(), is(2));
+    }
+
+    private Predicate predicateFilterCities() {
+        return new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return input.startsWith("B");
+            }
+        };
     }
 }
