@@ -1,0 +1,56 @@
+1) Preconditions --> Used to validate assumptions at the start of methods or constructors
+
+public car(Engine engine) {
+    this.engine = checkNotNull(engine) // NPE
+}
+
+2) Objects.toStringHelper() --> Makes implementing Object.toString cleaner
+
+return Objects.toStringHelper(this)
+    .add("name", name)
+    .add("id", userId)
+    .add("pet", pet) // pet is @nullable
+    .omitNullValues()
+    .toString;
+
+3) Stopwatch
+4) Splitter
+
+String data = " foo, ,bar, quux,";
+Splitter.on(',')
+    .trimResults()
+    .omitEmptyStrings()
+    .split(data);
+
+5) Joiner --> concatenates strings using a delimiter. throws a NPE on null objects unless: .skipNulls(), userForNull(String)
+
+6) Comparators
+
+// Old
+Comparator<String> byReverseOffSetThenName =
+    new Comparator<String>() {
+        public int compare(String tzId1, String tzId2) {
+            int offset1 = getOffSetForTzId(tzId1);
+            int offset2 = getOffSetForTzId(tzId2);
+            int result = offset2 - offset1;
+
+            return (result == 0) ? tzId1.compareTo(tzId2) : result;
+        }
+    };
+
+// new
+Comparator<String> byReverseOffSetThenName =
+    new Comparator<String>() {
+        public int compare(String tzId1, String tzId2) {
+            return ComparisonChain.start()
+                .compare(getOffSet(tzId2), getOffset(tzId1))
+                .compare(tzId1, tzId2)
+                .result();
+        }
+    };
+
+FluentComparator
+
+
+
+
